@@ -31,7 +31,7 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         /* Transisi halus untuk pop-up modal */
-        #videoModal { transition: opacity 0.3s ease-in-out; }
+        #routeModal { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-orchardz-light text-gray-800 antialiased pb-10">
@@ -53,6 +53,19 @@
         <div class="relative z-10 mt-8 bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl p-4 text-center">
             <p class="text-xs text-blue-100 uppercase tracking-widest mb-1">Jadwal Acara Hari Ini</p>
             <p id="current-date" class="text-lg font-bold text-white"></p>
+        </div>
+
+        <!-- INFO WIFI -->
+        <div class="relative z-10 mt-4 flex justify-center">
+            <div class="bg-white/10 border border-white/20 backdrop-blur-md rounded-xl px-5 py-2.5 flex items-center gap-3 shadow-lg">
+                <div class="bg-white/20 p-2 rounded-full">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path></svg>
+                </div>
+                <div class="text-left">
+                    <p class="text-[10px] text-blue-200 uppercase tracking-wider">Free Wi-Fi Password</p>
+                    <p class="text-base font-bold text-white leading-none">orchardz15</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -104,7 +117,8 @@
         </div>
     </section>
 
-    <div id="videoModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none">
+    <!-- MODAL SLIDESHOW RUTE -->
+    <div id="routeModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm opacity-0 pointer-events-none">
         <div class="bg-white w-11/12 max-w-sm rounded-3xl overflow-hidden shadow-2xl transform transition-transform scale-95" id="modalContent">
             
             <div class="px-5 py-4 flex justify-between items-center border-b border-gray-100">
@@ -112,19 +126,31 @@
                     <h3 class="font-bold text-orchardz-navy leading-tight">Rute ke Ruangan</h3>
                     <p id="modalRoomName" class="text-xs text-orchardz-magenta font-bold uppercase tracking-wider"></p>
                 </div>
-                <button onclick="closeVideo()" class="p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition">
+                <button onclick="closeRoute()" class="p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <div class="relative bg-black w-full aspect-[9/16]"> <video id="routeVideo" class="w-full h-full object-cover" loop muted playsinline preload="metadata">
-                    <source src="" type="video/mp4">
-                    Browser Anda tidak mendukung tag video.
-                </video>
+            <div class="relative bg-gray-100 w-full aspect-[4/5] overflow-hidden group">
+                <!-- Image Slide -->
+                <img id="slideImage" src="" class="w-full h-full object-cover transition-opacity duration-300">
+                
+                <!-- Navigation Buttons -->
+                <button onclick="changeSlide(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-orchardz-navy p-2 rounded-full shadow-lg backdrop-blur-sm transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="changeSlide(1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-orchardz-navy p-2 rounded-full shadow-lg backdrop-blur-sm transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+
+                <!-- Counter -->
+                <div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">
+                    <span id="slideCounter">1/1</span>
+                </div>
             </div>
             
             <div class="p-4 bg-gray-50 text-center">
-                <p class="text-[10px] text-gray-500 italic">Ikuti petunjuk arah di video ini dari area Lobby.</p>
+                <p class="text-[10px] text-gray-500 italic">Geser gambar untuk melihat langkah-langkah rute dari Lobby.</p>
             </div>
         </div>
     </div>
@@ -143,56 +169,70 @@
             }
         }
 
-        // Kamus Gambar Thumbnail & File Video
+        // Kamus Gambar Thumbnail & Slideshow Rute
+        // Ganti URL placeholder dengan nama file gambar asli Anda (misal: "rute-batavia1-1.jpg")
         const roomMediaMap = {
-            "Batavia 1": { image: "bt1.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
-            "Batavia 2": { image: "bt2.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
-            "Batavia 3": { image: "bt3.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
-            "Batavia 5": { image: "bt5.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
-            "Jayakarta": { image: "jykt.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
-            // Tambahkan yang lain nanti di sini, ganti URL video placeholder-nya dengan URL video lokal kamu (misal: "videos/nav-bt2.mp4")
+            "Batavia 1": { 
+                image: "bt1.jpg", 
+                slides: ["https://placehold.co/600x800?text=Lobby+ke+Lift", "https://placehold.co/600x800?text=Lift+Lantai+2", "https://placehold.co/600x800?text=Depan+Batavia+1"] 
+            },
+            "Batavia 2": { 
+                image: "bt2.jpg", 
+                slides: ["https://placehold.co/600x800?text=Rute+Batavia+2+Step+1", "https://placehold.co/600x800?text=Rute+Batavia+2+Step+2"] 
+            },
+            "Batavia 3": { image: "bt3.jpg", slides: [] }, // Kosong akan pakai default
+            "Batavia 5": { image: "bt5.jpg", slides: [] },
+            "Jayakarta": { image: "jykt.jpg", slides: [] },
         };
 
-        // FUNGSI KONTROL VIDEO MODAL
-        function openVideo(roomName) {
-            const modal = document.getElementById('videoModal');
+        // STATE SLIDESHOW
+        let currentSlideIndex = 0;
+        let currentSlides = [];
+
+        function openRoute(roomName) {
+            const modal = document.getElementById('routeModal');
             const modalContent = document.getElementById('modalContent');
-            const video = document.getElementById('routeVideo');
             const title = document.getElementById('modalRoomName');
             
             // Set judul
             title.innerText = roomName;
 
-            // Ambil URL video dari map, kalau tidak ada, pakai default placeholder
+            // Ambil Data Slides
             let mediaData = roomMediaMap[roomName];
-            let videoUrl = mediaData ? mediaData.video : "https://www.w3schools.com/html/mov_bbb.mp4";
+            // Jika ada slides, pakai itu. Jika tidak, pakai placeholder default.
+            currentSlides = (mediaData && mediaData.slides && mediaData.slides.length > 0) 
+                ? mediaData.slides 
+                : ["https://placehold.co/600x800?text=Peta+Belum+Tersedia"];
             
-            // Masukkan source ke video dan play
-            video.src = videoUrl;
-            video.load();
+            // Reset ke slide pertama
+            currentSlideIndex = 0;
+            updateSlideDisplay();
             
             // Munculkan Modal dengan animasi
             modal.classList.remove('opacity-0', 'pointer-events-none');
             modalContent.classList.remove('scale-95');
-            
-            // Mainkan video otomatis
-            video.play().catch(e => console.log("Autoplay dicegah browser, harus play manual", e));
         }
 
-        function closeVideo() {
-            const modal = document.getElementById('videoModal');
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            // Loop slide (jika di akhir kembali ke awal, dst)
+            if (currentSlideIndex >= currentSlides.length) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = currentSlides.length - 1;
+            updateSlideDisplay();
+        }
+
+        function updateSlideDisplay() {
+            document.getElementById('slideImage').src = currentSlides[currentSlideIndex];
+            document.getElementById('slideCounter').innerText = `${currentSlideIndex + 1} / ${currentSlides.length}`;
+        }
+
+        function closeRoute() {
+            const modal = document.getElementById('routeModal');
             const modalContent = document.getElementById('modalContent');
-            const video = document.getElementById('routeVideo');
             
             // Sembunyikan Modal
             modal.classList.add('opacity-0', 'pointer-events-none');
             modalContent.classList.add('scale-95');
-            
-            // Pause video dan reset waktu agar tidak boros kuota/baterai di background
-            setTimeout(() => {
-                video.pause();
-                video.currentTime = 0;
-            }, 300); // Tunggu animasi tutup selesai
         }
 
         async function fetchNav() {
@@ -212,7 +252,7 @@
                     let media = roomMediaMap[item.nama_ruangan];
                     let imageFile = media ? media.image : "default.jpg";
                     
-                    // Kita oper parameter nama ruangan ke fungsi openVideo
+                    // Kita oper parameter nama ruangan ke fungsi openRoute
                     let paramRuangan = `'${item.nama_ruangan}'`;
 
                     return `
@@ -233,7 +273,7 @@
                                         <span class="text-xs font-semibold text-orchardz-navy">${item.nama_ruangan}</span>
                                     </div>
                                     
-                                    <button onclick="openVideo(${paramRuangan})" class="bg-indigo-50 hover:bg-indigo-100 text-orchardz-navy text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition">
+                                    <button onclick="openRoute(${paramRuangan})" class="bg-indigo-50 hover:bg-indigo-100 text-orchardz-navy text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition">
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                                         Rute
                                     </button>
