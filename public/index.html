@@ -1,33 +1,143 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Navigasi Hotel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigasi Acara Hotel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS simpel biar gak pusing */
-        body { font-family: sans-serif; display: flex; gap: 20px; padding: 20px; }
-        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; width: 250px; }
-        img { width: 100%; border-radius: 4px; }
+        body { font-family: 'Poppins', sans-serif; }
+        /* Animasi loading sederhana */
+        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
-<body>
-    <div id="app">Loading data...</div>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-800 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <h1 class="text-xl md:text-2xl font-bold tracking-wide">Orchardz Signage</h1>
+            </div>
+            <div class="text-right">
+                <div id="clock" class="text-lg md:text-xl font-bold text-yellow-400">00:00:00</div>
+                <div id="date" class="text-xs md:text-sm text-blue-200">Memuat tanggal...</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div class="mb-8 text-center md:text-left">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Jadwal Acara Hari Ini</h2>
+            <p class="text-gray-500 mt-1">Silakan menuju ke ruangan yang tertera di bawah.</p>
+        </div>
+
+        <div id="app" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="col-span-full text-center py-20 pulse">
+                <svg class="w-12 h-12 text-indigo-500 mx-auto mb-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <p class="text-gray-500 font-semibold">Mensinkronkan data dari server...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-gray-400">
+            &copy; <span id="year"></span> Hotel IT Division. Diperbarui secara otomatis.
+        </div>
+    </footer>
 
     <script>
-        async function fetchNav() {
-            const res = await fetch('/.netlify/functions/get-nav');
-            const data = await res.json();
-            
-            const app = document.getElementById('app');
-            app.innerHTML = data.map(item => `
-                <div class="card">
-                    <img src="images/${item.file_gambar}" alt="denah">
-                    <h3>${item.nama_ruangan}</h3>
-                    <p>Acara: ${item.nama_acara}</p>
-                    <small>${item.lokasi_lantai}</small>
-                </div>
-            `).join('');
+        // 1. Fungsi Jam & Tanggal (Wajib buat Signage)
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('year').innerText = now.getFullYear();
         }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 2. Fungsi Ambil Data dari Netlify Function (Neon DB)
+        async function fetchNav() {
+            try {
+                // Panggil endpoint "Adik"
+                const res = await fetch('/.netlify/functions/get-nav');
+                const data = await res.json();
+                
+                const app = document.getElementById('app');
+
+                // Jika error atau data bukan array
+                if (!Array.isArray(data)) {
+                    app.innerHTML = `<div class="col-span-full text-center py-10 text-red-500">Gagal memuat data. Periksa koneksi database.</div>`;
+                    return;
+                }
+
+                // Jika hari ini tidak ada acara
+                if (data.length === 0) {
+                    app.innerHTML = `
+                        <div class="col-span-full bg-white rounded-2xl p-10 text-center shadow-sm border border-gray-100">
+                            <span class="text-4xl">🏖️</span>
+                            <h3 class="text-xl font-bold text-gray-700 mt-4">Belum Ada Acara</h3>
+                            <p class="text-gray-500">Tidak ada jadwal kegiatan untuk hari ini.</p>
+                        </div>`;
+                    return;
+                }
+
+                // Tampilkan Data ke dalam Card
+                app.innerHTML = data.map((item, index) => {
+                    // LOGIKA GAMBAR SEMENTARA (1.jpg, 2.jpg, dst berdasarkan urutan)
+                    // Nanti kamu bisa ubah 'imageNum' ini sesuai kebutuhan manualmu
+                    let imageNum = index + 1; 
+
+                    return `
+                        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col transform transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                            
+                            <div class="relative h-48 bg-gray-200">
+                                <img src="images/${imageNum}.jpg" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Denah+Ruangan'" alt="Denah ${item.nama_ruangan}" class="w-full h-full object-cover">
+                                
+                                <div class="absolute top-3 right-3 bg-indigo-600/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md">
+                                    ${item.lokasi_lantai}
+                                </div>
+                            </div>
+
+                            <div class="p-5 flex flex-col flex-grow">
+                                <span class="text-[10px] font-bold tracking-wider text-indigo-500 uppercase mb-1">Acara Berlangsung</span>
+                                <h3 class="text-xl font-bold text-gray-800 leading-tight mb-3 line-clamp-2">
+                                    ${item.nama_acara}
+                                </h3>
+                                
+                                <div class="mt-auto bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center gap-3">
+                                    <div class="bg-white p-2 rounded-full shadow-sm">
+                                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 font-medium">Lokasi Ruangan</p>
+                                        <p class="text-sm font-bold text-gray-800">${item.nama_ruangan}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error("Fetch error:", err);
+                document.getElementById('app').innerHTML = `<div class="col-span-full text-center py-10 text-red-500">Koneksi terputus. Mengulang kembali...</div>`;
+            }
+        }
+
+        // 3. Jalankan pertama kali
         fetchNav();
+
+        // 4. AUTO-REFRESH (PENTING UNTUK SIGNAGE)
+        // Mengecek database setiap 60 detik secara diam-diam tanpa me-reload layar TV
+        setInterval(fetchNav, 60000); 
+
     </script>
 </body>
 </html>
