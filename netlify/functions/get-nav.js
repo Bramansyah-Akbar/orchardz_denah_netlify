@@ -1,24 +1,24 @@
 const postgres = require('postgres');
 
 exports.handler = async (event, context) => {
-  // 1. Ambil URL di DALAM handler
   const URL = process.env.DATABASE_URL;
 
-  // 2. Cek apakah URL-nya ada
   if (!URL) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "DATABASE_URL tidak ditemukan di Environment Variables Netlify!" })
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: "DATABASE_URL kosong" }) };
   }
 
   try {
-    // 3. Inisialisasi koneksi di sini
     const sql = postgres(URL, { ssl: 'require' });
     
-    const data = await sql`SELECT * FROM navigasi_hotel`;
+    // 1. Dapatkan tanggal hari ini khusus zona waktu Jakarta (WIB)
+    // Format yang dihasilkan: YYYY-MM-DD
+    const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' };
+    const formatter = new Intl.DateTimeFormat('en-CA', options); 
+    const todayWIB = formatter.format(new Date());
+
+    // 2. Minta ke Neon DB HANYA acara yang tanggalnya = hari ini di WIB
+    const data = await sql`SELECT * FROM navigasi_hotel WHERE tanggal_acara = ${todayWIB}`;
     
-    // 4. Tutup koneksi setelah selesai (opsional tapi bagus buat serverless)
     await sql.end();
 
     return {
@@ -31,12 +31,6 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error("Error Detail:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ 
-        error: "Gagal konek ke Neon", 
-        message: error.message 
-      })
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: "Gagal ambil data", message: error.message }) };
   }
 };
