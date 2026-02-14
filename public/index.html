@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Navigasi Hotel</title>
+    <style>
+        /* CSS simpel biar gak pusing */
+        body { font-family: sans-serif; display: flex; gap: 20px; padding: 20px; }
+        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; width: 250px; }
+        img { width: 100%; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div id="app">Loading data...</div>
+
+    <script>
+        async function fetchNav() {
+            const res = await fetch('/.netlify/functions/get-nav');
+            const data = await res.json();
+            
+            const app = document.getElementById('app');
+            app.innerHTML = data.map(item => `
+                <div class="card">
+                    <img src="images/${item.file_gambar}" alt="denah">
+                    <h3>${item.nama_ruangan}</h3>
+                    <p>Acara: ${item.nama_acara}</p>
+                    <small>${item.lokasi_lantai}</small>
+                </div>
+            `).join('');
+        }
+        fetchNav();
+    </script>
+</body>
+</html>
