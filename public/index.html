@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Today's Events - Orchardz Hotel</title>
+    <title>Today's Events | Orchardz Jayakarta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -11,13 +11,12 @@
                 extend: {
                     colors: {
                         orchardz: {
-                            navy: '#1e3a8a',    // Warna teks biru gelap
-                            magenta: '#b83883', // Warna aksen merah keunguan (plum)
-                            light: '#f9f9fb'    // Warna background abu-abu sangat muda
+                            navy: '#1e3a8a',    // Biru Gelap
+                            magenta: '#b83883', // Merah Keunguan / Plum
+                            light: '#f8fafc'    // Background elegan
                         }
                     },
                     fontFamily: {
-                        // Menggunakan Serif elegan seperti di desain asli
                         serif: ['Merriweather', 'serif'],
                         sans: ['Poppins', 'sans-serif']
                     }
@@ -27,70 +26,109 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body { font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         .font-serif { font-family: 'Merriweather', serif; }
-        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        /* Menyembunyikan scrollbar tapi tetap bisa di-scroll untuk menu promosi */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-orchardz-light min-h-screen flex flex-col">
+<body class="bg-orchardz-light text-gray-800 antialiased pb-10">
 
-    <header class="bg-white py-6 border-b border-gray-200 shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold font-serif text-orchardz-navy tracking-widest uppercase">
-                Today's Events
-            </h1>
-            <p id="date" class="text-sm md:text-base font-semibold text-orchardz-magenta tracking-widest uppercase mt-2">
-                Memuat tanggal...
-            </p>
+    <div class="bg-gradient-to-br from-orchardz-navy to-blue-900 text-white rounded-b-[2.5rem] shadow-xl pb-12 pt-8 px-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-white opacity-5 rounded-full blur-2xl"></div>
+        <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 bg-orchardz-magenta opacity-20 rounded-full blur-xl"></div>
+        
+        <div class="relative z-10 flex justify-between items-start">
+            <div>
+                <p class="text-blue-200 text-sm font-medium tracking-wider uppercase mb-1">Welcome to</p>
+                <h1 class="text-2xl font-serif font-bold leading-tight">Orchardz Hotel<br>Jayakarta</h1>
+            </div>
+            <button onclick="shareLink()" class="bg-white/20 p-2.5 rounded-full backdrop-blur-sm active:scale-95 transition">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+            </button>
         </div>
-    </header>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
-        <div id="app" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="col-span-full text-center py-20 pulse">
-                <svg class="w-12 h-12 text-orchardz-magenta mx-auto mb-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                <p class="text-orchardz-navy font-serif tracking-widest">SINKRONISASI DATA...</p>
+        <div class="relative z-10 mt-8 bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl p-4 text-center">
+            <p class="text-xs text-blue-100 uppercase tracking-widest mb-1">Jadwal Acara Hari Ini</p>
+            <p id="current-date" class="text-lg font-bold text-white"></p>
+        </div>
+    </div>
+
+    <main class="max-w-lg mx-auto px-5 -mt-6 relative z-20">
+        
+        <div id="app" class="space-y-4">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 animate-pulse flex gap-4 items-center">
+                <div class="w-16 h-16 bg-gray-200 rounded-xl"></div>
+                <div class="flex-1 space-y-2">
+                    <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div class="h-3 bg-gray-100 rounded w-1/2"></div>
+                </div>
             </div>
         </div>
+
     </main>
 
-    <footer class="bg-white border-t border-gray-200 mt-auto px-4 py-4 shadow-inner">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="text-orchardz-magenta font-serif font-bold text-sm md:text-base uppercase tracking-wider text-center md:text-left">
-                Orchardz Hotel Jayakarta,<br>Jakarta
-            </div>
-            
-            <div class="text-center">
-                <div id="clock" class="text-4xl md:text-5xl font-bold text-orchardz-magenta tracking-tighter">
-                    00:00
+    <section class="max-w-lg mx-auto mt-12 px-5">
+        <div class="flex justify-between items-end mb-4">
+            <h2 class="text-lg font-serif font-bold text-orchardz-navy">Special Offers</h2>
+            <span class="text-xs font-bold text-orchardz-magenta uppercase tracking-wider">Explore</span>
+        </div>
+        
+        <div class="flex overflow-x-auto gap-4 hide-scroll pb-4">
+            <div class="min-w-[240px] bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&q=80&w=600&h=400" alt="Restaurant Promo" class="h-32 w-full object-cover">
+                <div class="p-4">
+                    <span class="text-[10px] font-bold text-orchardz-magenta uppercase tracking-wider">Food & Beverage</span>
+                    <h3 class="text-sm font-bold text-gray-800 mt-1">Lunch Buffet Delight</h3>
+                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">Nikmati hidangan spesial nusantara & western di Ritz Cafe. Diskon 20% untuk tamu meeting.</p>
                 </div>
-                <div class="text-xs font-bold text-orchardz-navy tracking-widest uppercase mt-1">WIB</div>
             </div>
 
-            <div class="flex items-center gap-2 text-orchardz-navy">
-                <svg class="w-8 h-8 text-orchardz-magenta" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/></svg>
-                <span class="font-serif font-bold text-sm tracking-widest uppercase">Orchardz<br>Jayakarta</span>
+            <div class="min-w-[240px] bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=600&h=400" alt="Room Promo" class="h-32 w-full object-cover">
+                <div class="p-4">
+                    <span class="text-[10px] font-bold text-orchardz-magenta uppercase tracking-wider">Staycation</span>
+                    <h3 class="text-sm font-bold text-gray-800 mt-1">Weekend Getaway</h3>
+                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">Lelah setelah meeting? Pesan kamar sekarang dan dapatkan free upgrade (S&K berlaku).</p>
+                </div>
             </div>
         </div>
-    </footer>
+    </section>
+
+    <section class="max-w-lg mx-auto mt-8 px-5">
+        <div class="bg-orchardz-navy rounded-2xl p-6 text-center text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16z"/></svg>
+            </div>
+            <h3 class="font-serif font-bold text-lg mb-2">Butuh Bantuan?</h3>
+            <p class="text-xs text-blue-200 mb-4">Tim Banquet & Sales kami siap membantu kelancaran acara Anda hari ini.</p>
+            <a href="https://wa.me/6281234567890" target="_blank" class="inline-block bg-orchardz-magenta hover:bg-pink-700 text-white text-sm font-bold px-6 py-3 rounded-full shadow-lg transition transform hover:-translate-y-0.5">
+                Hubungi Kami via WhatsApp
+            </a>
+        </div>
+        <p class="text-center text-[10px] text-gray-400 mt-6">&copy; 2026 Orchardz Hotel Jayakarta. All rights reserved.</p>
+    </section>
 
     <script>
-        // 1. Fungsi Jam & Tanggal (Format persis seperti gambar)
-        function updateClock() {
-            const now = new Date();
-            
-            // Format Jam: 13:48
-            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
-            
-            // Format Tanggal: SATURDAY, 14 FEBRUARY 2026
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            document.getElementById('date').innerText = now.toLocaleDateString('en-GB', options);
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+        // Set Tanggal di Header
+        const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('id-ID', dateOptions);
 
-        // 2. Kamus Gambar Ruangan (Mapping)
+        // Fitur Native Share (Cocok untuk tim Sales)
+        function shareLink() {
+            if (navigator.share) {
+                navigator.share({
+                    title: "Jadwal Acara Orchardz Jayakarta",
+                    text: "Cek jadwal meeting dan acara hari ini di Orchardz Hotel Jayakarta secara langsung melalui link berikut.",
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                alert("Salin link ini untuk membagikan jadwal: " + window.location.href);
+            }
+        }
+
+        // Kamus Gambar Ruangan (Mapping)
         const roomImageMap = {
             "Batavia 1": "bt1.jpg",
             "Batavia 2": "bt2.jpg",
@@ -103,57 +141,49 @@
             "Jayakarta": "jykt.jpg"
         };
 
-        // 3. Fungsi Tarik Data dari Cloud
+        // Fetch Data dari Cloud (Neon DB)
         async function fetchNav() {
             try {
                 const res = await fetch('/.netlify/functions/get-nav');
                 const data = await res.json();
-                
                 const app = document.getElementById('app');
 
                 if (!Array.isArray(data)) {
-                    app.innerHTML = `<div class="col-span-full text-center py-10 font-serif text-orchardz-magenta">Gagal memuat data. Periksa koneksi.</div>`;
+                    app.innerHTML = `<div class="bg-white p-6 rounded-2xl text-center text-red-500 shadow-sm border border-red-100">Gagal terhubung ke server database.</div>`;
                     return;
                 }
 
                 if (data.length === 0) {
                     app.innerHTML = `
-                        <div class="col-span-full bg-white rounded-xl p-10 text-center shadow-md border border-gray-100">
-                            <h3 class="text-2xl font-bold font-serif text-orchardz-navy tracking-wider mb-2">NO EVENTS TODAY</h3>
-                            <p class="text-gray-500">Tidak ada jadwal kegiatan untuk hari ini.</p>
+                        <div class="bg-white p-8 rounded-2xl text-center shadow-sm border border-gray-100">
+                            <span class="text-4xl">✨</span>
+                            <h3 class="text-lg font-serif font-bold text-orchardz-navy mt-3">Tidak Ada Acara</h3>
+                            <p class="text-sm text-gray-500 mt-1">Belum ada jadwal meeting untuk hari ini.</p>
                         </div>`;
                     return;
                 }
 
-                // Render Kartu Acara
+                // Render List Acara (Mobile Style Feed)
                 app.innerHTML = data.map((item) => {
-                    
-                    // Cek nama file gambar dari kamus. Jika tidak ada yang cocok, gunakan default.jpg
                     let namaFileGambar = roomImageMap[item.nama_ruangan] || "default.jpg";
 
                     return `
-                        <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col transform transition duration-300 hover:shadow-lg">
-                            
-                            <div class="relative h-48 bg-gray-100">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex gap-4 items-center">
+                            <div class="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 shadow-inner">
                                 <img src="images/${namaFileGambar}" 
-                                     onerror="this.src='https://placehold.co/600x400/f8fafc/1e3a8a?text=Orchardz+Jayakarta'" 
+                                     onerror="this.src='https://placehold.co/150x150/f8fafc/1e3a8a?text=Orchardz'" 
                                      alt="${item.nama_ruangan}" 
                                      class="w-full h-full object-cover">
                             </div>
-
-                            <div class="p-6 flex flex-col flex-grow text-center">
-                                <span class="text-xs font-bold tracking-widest text-orchardz-navy uppercase mb-2">
-                                    ACARA
-                                </span>
-                                
-                                <h3 class="text-xl md:text-2xl font-bold font-serif text-orchardz-magenta leading-snug mb-4">
+                            
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[10px] font-bold text-orchardz-magenta tracking-widest uppercase mb-0.5">${item.lokasi_lantai || 'TBA'}</p>
+                                <h3 class="text-base font-bold text-gray-800 leading-snug truncate">
                                     ${item.nama_acara || 'Internal Meeting'}
                                 </h3>
-                                
-                                <div class="mt-auto">
-                                    <div class="inline-block bg-orchardz-magenta text-white font-serif font-bold tracking-wider px-6 py-2 rounded-full shadow-md w-full md:w-auto text-sm md:text-base uppercase">
-                                        ${item.nama_ruangan} | ${item.lokasi_lantai || 'TBA'}
-                                    </div>
+                                <div class="mt-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-orchardz-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <span class="text-xs font-semibold text-orchardz-navy">${item.nama_ruangan}</span>
                                 </div>
                             </div>
                         </div>
@@ -166,7 +196,8 @@
         }
 
         fetchNav();
-        setInterval(fetchNav, 60000); // Auto-update setiap 1 menit
+        // Karena ini mobile web, refresh cukup 5 menit sekali untuk hemat baterai tamu
+        setInterval(fetchNav, 300000); 
     </script>
 </body>
 </html>
