@@ -11,9 +11,9 @@
                 extend: {
                     colors: {
                         orchardz: {
-                            navy: '#1e3a8a',    // Biru Gelap
-                            magenta: '#b83883', // Merah Keunguan / Plum
-                            light: '#f8fafc'    // Background elegan
+                            navy: '#1e3a8a',
+                            magenta: '#b83883',
+                            light: '#f8fafc'
                         }
                     },
                     fontFamily: {
@@ -28,9 +28,10 @@
     <style>
         body { font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         .font-serif { font-family: 'Merriweather', serif; }
-        /* Menyembunyikan scrollbar tapi tetap bisa di-scroll untuk menu promosi */
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Transisi halus untuk pop-up modal */
+        #videoModal { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-orchardz-light text-gray-800 antialiased pb-10">
@@ -56,7 +57,6 @@
     </div>
 
     <main class="max-w-lg mx-auto px-5 -mt-6 relative z-20">
-        
         <div id="app" class="space-y-4">
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 animate-pulse flex gap-4 items-center">
                 <div class="w-16 h-16 bg-gray-200 rounded-xl"></div>
@@ -66,7 +66,6 @@
                 </div>
             </div>
         </div>
-
     </main>
 
     <section class="max-w-lg mx-auto mt-12 px-5">
@@ -77,20 +76,19 @@
         
         <div class="flex overflow-x-auto gap-4 hide-scroll pb-4">
             <div class="min-w-[240px] bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&q=80&w=600&h=400" alt="Restaurant Promo" class="h-32 w-full object-cover">
+                <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&q=80&w=600&h=400" alt="Promo" class="h-32 w-full object-cover">
                 <div class="p-4">
                     <span class="text-[10px] font-bold text-orchardz-magenta uppercase tracking-wider">Food & Beverage</span>
                     <h3 class="text-sm font-bold text-gray-800 mt-1">Lunch Buffet Delight</h3>
-                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">Nikmati hidangan spesial nusantara & western di Ritz Cafe. Diskon 20% untuk tamu meeting.</p>
+                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">Nikmati hidangan spesial nusantara. Diskon 20% untuk tamu meeting.</p>
                 </div>
             </div>
-
             <div class="min-w-[240px] bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=600&h=400" alt="Room Promo" class="h-32 w-full object-cover">
+                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=600&h=400" alt="Promo" class="h-32 w-full object-cover">
                 <div class="p-4">
                     <span class="text-[10px] font-bold text-orchardz-magenta uppercase tracking-wider">Staycation</span>
                     <h3 class="text-sm font-bold text-gray-800 mt-1">Weekend Getaway</h3>
-                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">Lelah setelah meeting? Pesan kamar sekarang dan dapatkan free upgrade (S&K berlaku).</p>
+                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">Pesan kamar sekarang dan dapatkan free upgrade (S&K berlaku).</p>
                 </div>
             </div>
         </div>
@@ -98,82 +96,129 @@
 
     <section class="max-w-lg mx-auto mt-8 px-5">
         <div class="bg-orchardz-navy rounded-2xl p-6 text-center text-white relative overflow-hidden">
-            <div class="absolute -right-10 -top-10 opacity-10">
-                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16z"/></svg>
-            </div>
             <h3 class="font-serif font-bold text-lg mb-2">Butuh Bantuan?</h3>
             <p class="text-xs text-blue-200 mb-4">Tim Banquet & Sales kami siap membantu kelancaran acara Anda hari ini.</p>
-            <a href="https://wa.me/6281234567890" target="_blank" class="inline-block bg-orchardz-magenta hover:bg-pink-700 text-white text-sm font-bold px-6 py-3 rounded-full shadow-lg transition transform hover:-translate-y-0.5">
-                Hubungi Kami via WhatsApp
+            <a href="https://wa.me/6281234567890" target="_blank" class="inline-block bg-orchardz-magenta hover:bg-pink-700 text-white text-sm font-bold px-6 py-3 rounded-full shadow-lg">
+                Hubungi via WhatsApp
             </a>
         </div>
-        <p class="text-center text-[10px] text-gray-400 mt-6">&copy; 2026 Orchardz Hotel Jayakarta. All rights reserved.</p>
     </section>
 
+    <div id="videoModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none">
+        <div class="bg-white w-11/12 max-w-sm rounded-3xl overflow-hidden shadow-2xl transform transition-transform scale-95" id="modalContent">
+            
+            <div class="px-5 py-4 flex justify-between items-center border-b border-gray-100">
+                <div>
+                    <h3 class="font-bold text-orchardz-navy leading-tight">Rute ke Ruangan</h3>
+                    <p id="modalRoomName" class="text-xs text-orchardz-magenta font-bold uppercase tracking-wider"></p>
+                </div>
+                <button onclick="closeVideo()" class="p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="relative bg-black w-full aspect-[9/16]"> <video id="routeVideo" class="w-full h-full object-cover" loop muted playsinline preload="metadata">
+                    <source src="" type="video/mp4">
+                    Browser Anda tidak mendukung tag video.
+                </video>
+            </div>
+            
+            <div class="p-4 bg-gray-50 text-center">
+                <p class="text-[10px] text-gray-500 italic">Ikuti petunjuk arah di video ini dari area Lobby.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Set Tanggal di Header
         const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
         document.getElementById('current-date').innerText = new Date().toLocaleDateString('id-ID', dateOptions);
 
-        // Fitur Native Share (Cocok untuk tim Sales)
         function shareLink() {
             if (navigator.share) {
                 navigator.share({
                     title: "Jadwal Acara Orchardz Jayakarta",
-                    text: "Cek jadwal meeting dan acara hari ini di Orchardz Hotel Jayakarta secara langsung melalui link berikut.",
+                    text: "Cek jadwal meeting dan acara hari ini di Orchardz Hotel Jayakarta.",
                     url: window.location.href
                 }).catch(console.error);
-            } else {
-                alert("Salin link ini untuk membagikan jadwal: " + window.location.href);
             }
         }
 
-        // Kamus Gambar Ruangan (Mapping)
-        const roomImageMap = {
-            "Batavia 1": "bt1.jpg",
-            "Batavia 2": "bt2.jpg",
-            "Batavia 3": "bt3.jpg",
-            "Batavia 5": "bt5.jpg",
-            "Batavia 6": "bt6.jpg",
-            "Batavia 7": "bt7.jpg",
-            "Batavia 8": "bt8.jpg",
-            "Anggrek Ballroom": "aggrk.jpg",
-            "Jayakarta": "jykt.jpg"
+        // Kamus Gambar Thumbnail & File Video
+        const roomMediaMap = {
+            "Batavia 1": { image: "bt1.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            "Batavia 2": { image: "bt2.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            "Batavia 3": { image: "bt3.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            "Batavia 5": { image: "bt5.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            "Jayakarta": { image: "jykt.jpg", video: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            // Tambahkan yang lain nanti di sini, ganti URL video placeholder-nya dengan URL video lokal kamu (misal: "videos/nav-bt2.mp4")
         };
 
-        // Fetch Data dari Cloud (Neon DB)
+        // FUNGSI KONTROL VIDEO MODAL
+        function openVideo(roomName) {
+            const modal = document.getElementById('videoModal');
+            const modalContent = document.getElementById('modalContent');
+            const video = document.getElementById('routeVideo');
+            const title = document.getElementById('modalRoomName');
+            
+            // Set judul
+            title.innerText = roomName;
+
+            // Ambil URL video dari map, kalau tidak ada, pakai default placeholder
+            let mediaData = roomMediaMap[roomName];
+            let videoUrl = mediaData ? mediaData.video : "https://www.w3schools.com/html/mov_bbb.mp4";
+            
+            // Masukkan source ke video dan play
+            video.src = videoUrl;
+            video.load();
+            
+            // Munculkan Modal dengan animasi
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            
+            // Mainkan video otomatis
+            video.play().catch(e => console.log("Autoplay dicegah browser, harus play manual", e));
+        }
+
+        function closeVideo() {
+            const modal = document.getElementById('videoModal');
+            const modalContent = document.getElementById('modalContent');
+            const video = document.getElementById('routeVideo');
+            
+            // Sembunyikan Modal
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.add('scale-95');
+            
+            // Pause video dan reset waktu agar tidak boros kuota/baterai di background
+            setTimeout(() => {
+                video.pause();
+                video.currentTime = 0;
+            }, 300); // Tunggu animasi tutup selesai
+        }
+
         async function fetchNav() {
             try {
                 const res = await fetch('/.netlify/functions/get-nav');
                 const data = await res.json();
                 const app = document.getElementById('app');
 
-                if (!Array.isArray(data)) {
-                    app.innerHTML = `<div class="bg-white p-6 rounded-2xl text-center text-red-500 shadow-sm border border-red-100">Gagal terhubung ke server database.</div>`;
-                    return;
-                }
-
+                if (!Array.isArray(data)) return;
                 if (data.length === 0) {
-                    app.innerHTML = `
-                        <div class="bg-white p-8 rounded-2xl text-center shadow-sm border border-gray-100">
-                            <span class="text-4xl">✨</span>
-                            <h3 class="text-lg font-serif font-bold text-orchardz-navy mt-3">Tidak Ada Acara</h3>
-                            <p class="text-sm text-gray-500 mt-1">Belum ada jadwal meeting untuk hari ini.</p>
-                        </div>`;
+                    app.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center shadow-sm">Belum ada jadwal.</div>`;
                     return;
                 }
 
-                // Render List Acara (Mobile Style Feed)
+                // Render List
                 app.innerHTML = data.map((item) => {
-                    let namaFileGambar = roomImageMap[item.nama_ruangan] || "default.jpg";
+                    let media = roomMediaMap[item.nama_ruangan];
+                    let imageFile = media ? media.image : "default.jpg";
+                    
+                    // Kita oper parameter nama ruangan ke fungsi openVideo
+                    let paramRuangan = `'${item.nama_ruangan}'`;
 
                     return `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex gap-4 items-center">
-                            <div class="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 shadow-inner">
-                                <img src="images/${namaFileGambar}" 
-                                     onerror="this.src='https://placehold.co/150x150/f8fafc/1e3a8a?text=Orchardz'" 
-                                     alt="${item.nama_ruangan}" 
-                                     class="w-full h-full object-cover">
+                            <div class="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 shadow-inner relative">
+                                <img src="images/${imageFile}" onerror="this.src='https://placehold.co/150/f8fafc/1e3a8a?text=Room'" class="w-full h-full object-cover">
                             </div>
                             
                             <div class="flex-1 min-w-0">
@@ -181,22 +226,27 @@
                                 <h3 class="text-base font-bold text-gray-800 leading-snug truncate">
                                     ${item.nama_acara || 'Internal Meeting'}
                                 </h3>
-                                <div class="mt-1 flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-orchardz-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    <span class="text-xs font-semibold text-orchardz-navy">${item.nama_ruangan}</span>
+                                
+                                <div class="mt-2 flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 text-orchardz-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        <span class="text-xs font-semibold text-orchardz-navy">${item.nama_ruangan}</span>
+                                    </div>
+                                    
+                                    <button onclick="openVideo(${paramRuangan})" class="bg-indigo-50 hover:bg-indigo-100 text-orchardz-navy text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                                        Rute
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     `;
                 }).join('');
 
-            } catch (err) {
-                console.error("Fetch error:", err);
-            }
+            } catch (err) { console.error("Fetch error:", err); }
         }
 
         fetchNav();
-        // Karena ini mobile web, refresh cukup 5 menit sekali untuk hemat baterai tamu
         setInterval(fetchNav, 300000); 
     </script>
 </body>
